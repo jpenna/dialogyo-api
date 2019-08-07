@@ -2,22 +2,16 @@ from dotenv import load_dotenv
 from starlette.applications import Starlette
 from starlette.graphql import GraphQLApp
 import os
-import graphene
 import uvicorn
+
+from graphql_api.schema import schema
 
 
 load_dotenv()
 
 
-class Query(graphene.ObjectType):
-    hello = graphene.String(name=graphene.String(default_value="stranger"))
-
-    def resolve_hello(self, info, name):
-        return "Hello " + name
-
-
 app = Starlette(debug=os.getenv('DEVELOPMENT'))
-app.add_route('/graphql', GraphQLApp(schema=graphene.Schema(query=Query)))
+app.add_route('/graphql', GraphQLApp(schema=schema))
 
 
 if __name__ == '__main__':
