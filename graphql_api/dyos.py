@@ -1,6 +1,6 @@
 from graphene import (ObjectType, String, List, Field,
                       Int, ID, types, NonNull, Enum)
-from graphql_api import authors
+from graphql_api import authors, _data
 
 
 class PrivacyEnum(Enum):
@@ -27,7 +27,7 @@ class Dyo(ObjectType):
     repliesCount = Int(required=True)
     # repliesList = REPLIES
     dyosCount = Int(required=True)
-    # dyosList = List(Dyo)
+    dyosList = List(lambda: Dyo)
 
     def resolve_author(parent, info):
         return authors.Query.resolve_author(None,
@@ -39,29 +39,7 @@ class Query(ObjectType):
     dyosList = NonNull(List(NonNull(Dyo)))
 
     def resolve_dyo(parent, info, id):
-        return {
-            'id': '1298',
-            'headline': 'A title',
-            'body': 'My content',
-            'tags': ['content', 'first'],
-            'privacy': 'private',
-            'authorId': '123',
-            'repliesCount': 2,
-            # 'repliesList': REPLIES,
-            'dyosCount': 1,
-            # 'dyosList': List(Dyo),
-        }
+        return _data.dyo1 if id == '1' else _data.dyo2 if id == '2' else None
 
     def resolve_dyosList(parent, info):
-        return [{
-            'id': 'sa123',
-            'headline': 'A title',
-            'body': 'My content',
-            'tags': ['content', 'first'],
-            'privacy': 'private',
-            # 'author': AUTHOR,
-            'repliesCount': 2,
-            # 'repliesList': REPLIES,
-            'dyosCount': 1,
-            # 'dyosList': List(Dyo),
-        }]
+        return [_data.dyo1, _data.dyo2]

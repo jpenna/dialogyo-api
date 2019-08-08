@@ -11,7 +11,6 @@ class Query(ObjectType):
     author = Field(Author, id=String(required=True))
 
     def resolve_author(parent, info, id):
-        # if id == '123':
         return {
             'id': '123',
             'name': 'Grizzly Bear',
