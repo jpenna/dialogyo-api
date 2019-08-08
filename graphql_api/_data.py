@@ -1,12 +1,30 @@
+author1 = {
+    'id': '123',
+    'name': 'Grizzly Bear',
+    'avatar': '#984321'
+}
+
+reply1 = {
+    'id': '1',
+    'body': 'You are completely wrong',
+    'author': author1
+}
+
+reply2 = {
+    'id': '2',
+    'body': 'I am definetelly right',
+    'author': author1
+}
+
 dyo1 = {
     'id': '1',
     'headline': 'A title',
     'body': 'My content',
     'tags': ['content', 'first'],
     'privacy': 'private',
-    'authorId': '123',
+    'author': author1,
     'repliesCount': 2,
-    # 'repliesList': REPLIES,
+    'repliesList': [reply1, reply2],
     'dyosCount': 1,
     'dyosList': [],
 }
@@ -17,9 +35,9 @@ dyo2 = {
     'body': 'My content',
     'tags': ['content', 'first'],
     'privacy': 'private',
-    'authorId': '123',
+    'author': author1,
     'repliesCount': 2,
-    # 'repliesList': REPLIES,
+    'repliesList': [reply2],
     'dyosCount': 1,
     'dyosList': [dyo1],
 }
