@@ -1,10 +1,11 @@
 from graphene import (ObjectType, String, List, Field,
                       Int, ID, types, NonNull, Enum)
+from graphql_api import authors
 
 
 class PrivacyEnum(Enum):
-    private = 0
-    public = 1
+    private = 'private'
+    public = 'public'
 
     @property
     def description(self):
@@ -15,17 +16,22 @@ class PrivacyEnum(Enum):
 
 
 class Dyo(ObjectType):
-    id: ID
+    id = ID
     headline = String(default_value="")
     body = String(description="The content for the post.", required=True)
     tags = List(String)
-    privacy = PrivacyEnum(description="The level of privacy set for this dyo.")
-    createdAt = types.datetime.DateTime()
-    # author = AUTHOR
+    privacy = PrivacyEnum(required=True,
+                          description="The level of privacy set for this dyo.")
+    createdAt = types.datetime.DateTime(required=True)
+    author = Field(authors.Author)
     repliesCount = Int(required=True)
     # repliesList = REPLIES
     dyosCount = Int(required=True)
     # dyosList = List(Dyo)
+
+    def resolve_author(parent, info):
+        return authors.Query.resolve_author(None,
+                                            info, id=parent['authorId'])
 
 
 class Query(ObjectType):
@@ -38,8 +44,8 @@ class Query(ObjectType):
             'headline': 'A title',
             'body': 'My content',
             'tags': ['content', 'first'],
-            'mode': 'private',
-            # 'author': AUTHOR,
+            'privacy': 'private',
+            'authorId': '123',
             'repliesCount': 2,
             # 'repliesList': REPLIES,
             'dyosCount': 1,
@@ -48,10 +54,11 @@ class Query(ObjectType):
 
     def resolve_dyosList(parent, info):
         return [{
+            'id': 'sa123',
             'headline': 'A title',
             'body': 'My content',
             'tags': ['content', 'first'],
-            'mode': 'private',
+            'privacy': 'private',
             # 'author': AUTHOR,
             'repliesCount': 2,
             # 'repliesList': REPLIES,

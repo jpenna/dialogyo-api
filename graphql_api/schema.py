@@ -1,8 +1,8 @@
 import graphene
-import graphql_api.dyos
+from graphql_api import dyos, authors
 
 
-class Query(graphql_api.dyos.Query):
+class Query(dyos.Query, authors.Query):
     pass
 
 
