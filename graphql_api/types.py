@@ -25,12 +25,13 @@ class Reply(ObjectType):
 
 class Dyo(ObjectType):
     id = ID(required=True)
-    headline = String(default_value="", required=True)
+    headline = String()
     body = String(description="The content for the post.", required=True)
     tags = List(NonNull(String), required=True)
     privacy = List(NonNull(String), required=True,
                    description=privacy_description)
     createdAt = types.datetime.DateTime(required=True)
     author = NonNull(Author)
-    repliesList = List(NonNull(Reply), required=True)
-    dyosList = List(lambda: NonNull(Dyo), required=True)
+    repliesList = List(NonNull(Reply))
+    dyosList = List(lambda: NonNull(Dyo))
+    parentList = List(NonNull(ID))

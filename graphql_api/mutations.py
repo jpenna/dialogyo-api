@@ -8,6 +8,7 @@ from graphql_api._data import author1, reply1, dyo1
 class CreateDyo(Mutation):
     class Arguments:
         authorId = String()
+        parentId = String()
 
         headline = String()
         body = String(description="The content for the post.", required=True)
@@ -18,7 +19,8 @@ class CreateDyo(Mutation):
 
     Output = Dyo
 
-    def mutate(root, info, body, tags, privacy, authorId=None, headline=None):
+    def mutate(root, info, body, tags, privacy, parentId=None, authorId=None,
+               headline=''):
         assert len(tags) >= 3, 'Set at least 3 tags'
         dyo = {
             'id': '1234asd',
