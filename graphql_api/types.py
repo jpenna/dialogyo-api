@@ -19,16 +19,18 @@ class Reply(ObjectType):
     id = ID(required=True)
     body = String(required=True)
     author = Field(Author, required=True)
+    dyoId = String(required=True,
+                   description="Dyo ID which this reply replies.")
 
 
 class Dyo(ObjectType):
     id = ID(required=True)
     headline = String(default_value="", required=True)
     body = String(description="The content for the post.", required=True)
-    tags = NonNull(List(NonNull(String)))
-    privacy = NonNull(List(
-                    NonNull(String)), description=privacy_description)
+    tags = List(NonNull(String), required=True)
+    privacy = List(NonNull(String), required=True,
+                   description=privacy_description)
     createdAt = types.datetime.DateTime(required=True)
     author = NonNull(Author)
-    repliesList = NonNull(List(NonNull(Reply)))
-    dyosList = NonNull(List(lambda: NonNull(Dyo)))
+    repliesList = List(NonNull(Reply), required=True)
+    dyosList = List(lambda: NonNull(Dyo), required=True)

@@ -7,13 +7,15 @@ author1 = {
 reply1 = {
     'id': '1',
     'body': 'You are completely wrong',
-    'author': author1
+    'author': author1,
+    'dyoId': '1',
 }
 
 reply2 = {
     'id': '2',
     'body': 'I am definetelly right',
-    'author': author1
+    'author': author1,
+    'dyoId': '2'
 }
 
 dyo1 = {
