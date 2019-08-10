@@ -22,7 +22,7 @@ class Reply(ObjectType):
 
 
 class Dyo(ObjectType):
-    id = ID
+    id = ID(required=True)
     headline = String(default_value="", required=True)
     body = String(description="The content for the post.", required=True)
     tags = NonNull(List(NonNull(String)))
