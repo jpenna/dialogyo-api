@@ -11,6 +11,8 @@ flake8 = "*"
 starlette = "*"
 uvicorn = "*"
 python-dotenv = "*"
+snapshottest = "*"
+pytest = "*"
 
 [requires]
 python_version = "3.7"
