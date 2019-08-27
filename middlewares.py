@@ -9,7 +9,7 @@ isDev = os.getenv('DEVELOPMENT')
 allowedHosts = ['dyalogio.com', 'dialogyo.com', 'dyalogyo.com']
 
 
-def setupMiddlewares(app):
+def setup_middlewares(app):
     if not isDev:
         app.add_middleware(
             TrustedHostMiddleware,

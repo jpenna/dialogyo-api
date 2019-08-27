@@ -5,7 +5,7 @@ from starlette.responses import PlainTextResponse
 import os
 import debuggers
 
-from middlewares import setupMiddlewares
+from middlewares import setup_middlewares
 from client_api import schema
 from db import GraphDB
 
@@ -18,7 +18,7 @@ if isDev:
         debuggers.debug_vscode()
 
 app = Starlette(debug=isDev)
-setupMiddlewares(app)
+setup_middlewares(app)
 
 app.add_route('/graphql', GraphQLApp(schema=schema))
 
