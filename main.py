@@ -8,6 +8,7 @@ import debuggers
 from middlewares import setup_middlewares
 from client_api import schema
 from db import GraphDB
+import db.dyo as dyoDB
 
 load_dotenv()
 
@@ -37,6 +38,6 @@ def shutdown():
 
 @app.route('/msg/{msg}')
 def message(request):
-    oi = graphDB.print_greeting(request.path_params['msg'])
+    oi = dyoDB.print_greeting(request.path_params['msg'])
     print(oi)
     return PlainTextResponse(oi)
