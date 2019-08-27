@@ -13,6 +13,7 @@ uvicorn = "*"
 python-dotenv = "*"
 snapshottest = "*"
 pytest = "*"
+neo4j = "*"
 
 [requires]
 python_version = "3.7"

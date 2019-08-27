@@ -1,5 +1,5 @@
 from graphene.test import Client
-from graphql_api.schema import schema
+from client_api.schema import schema
 from snapshottest import TestCase
 
 

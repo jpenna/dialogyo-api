@@ -1,6 +1,6 @@
 from graphene import (ObjectType, String, List, Field, NonNull)
-from graphql_api._data import dyo1, dyo2, reply1, reply2
-from graphql_api.types import Dyo, Reply
+from client_api._data import dyo1, dyo2, reply1, reply2
+from client_api.types import Dyo, Reply
 
 
 class Query(ObjectType):

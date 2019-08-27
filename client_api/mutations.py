@@ -1,8 +1,8 @@
 import datetime
 from graphene import ObjectType, String, List, NonNull, Mutation
-from graphql_api.types import Dyo, privacy_description, Reply
+from client_api.types import Dyo, privacy_description, Reply
 
-from graphql_api._data import author1, reply1, dyo1
+from client_api._data import author1, reply1, dyo1
 
 
 class CreateDyo(Mutation):

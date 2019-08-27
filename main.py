@@ -4,7 +4,7 @@ from starlette.graphql import GraphQLApp
 import os
 import uvicorn
 
-from graphql_api import schema
+from client_api import schema
 
 
 load_dotenv()
