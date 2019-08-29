@@ -1,4 +1,4 @@
-import datetime
+import db.dyo as dyoDB
 from graphene import ObjectType, String, List, NonNull, Mutation
 from client_api.types import Dyo, privacy_description, Reply
 
@@ -7,8 +7,8 @@ from client_api._data import author1, reply1, dyo1
 
 class CreateDyo(Mutation):
     class Arguments:
-        authorId = String()
         parentId = String()
+        groupId = String()
 
         headline = String()
         body = String(description="The content for the post.", required=True)
@@ -19,21 +19,24 @@ class CreateDyo(Mutation):
 
     Output = Dyo
 
-    def mutate(root, info, body, tags, privacy, parentId=None, authorId=None,
+    def mutate(root, info, body, tags, privacy, groupId=None, parentId=None,
                headline=''):
         assert len(tags) >= 3, 'Set at least 3 tags'
+
+        userId = '123'
         dyo = {
-            'id': '1234asd',
             'headline': headline,
             'body': body,
             'tags': tags,
-            'createdAt': datetime.datetime.now(),
             'privacy': privacy,
-            'author': author1,
-            'repliesList': [reply1],
-            'dyosList': [dyo1]
         }
-        return Dyo(**dyo)
+        author = {
+            'name': author1['name'],
+            'avatar': author1['avatar'],
+        }
+
+        result = dyoDB.create_dyo(userId, dyo, author)
+        return Dyo(**result)
 
 
 class CreateReply(Mutation):

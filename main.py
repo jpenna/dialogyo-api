@@ -1,14 +1,12 @@
 from dotenv import load_dotenv
 from starlette.applications import Starlette
 from starlette.graphql import GraphQLApp
-from starlette.responses import PlainTextResponse
 import os
 import debuggers
 
 from middlewares import setup_middlewares
 from client_api import schema
 from db import GraphDB
-import db.dyo as dyoDB
 
 load_dotenv()
 
@@ -34,10 +32,3 @@ def startup():
 @app.on_event("shutdown")
 def shutdown():
     graphDB.disconnect()
-
-
-@app.route('/msg/{msg}')
-def message(request):
-    oi = dyoDB.print_greeting(request.path_params['msg'])
-    print(oi)
-    return PlainTextResponse(oi)

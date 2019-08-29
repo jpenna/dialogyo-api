@@ -1,5 +1,5 @@
 from graphene import (ObjectType, String, List, Field,
-                      ID, types, NonNull)
+                      ID, types, NonNull, DateTime)
 
 privacy_description = '''
 [] - Private\n
@@ -10,7 +10,8 @@ privacy_description = '''
 
 
 class Author(ObjectType):
-    id = ID(required=True)
+    id = ID(required=True)  # todo is not unique
+    # createdAt = DateTime(required=True)
     name = String(required=True)
     avatar = String(required=True)
 
@@ -25,6 +26,7 @@ class Reply(ObjectType):
 
 class Dyo(ObjectType):
     id = ID(required=True)
+    groupId = String(required=True)
     headline = String()
     body = String(description="The content for the post.", required=True)
     tags = List(NonNull(String), required=True)

@@ -20,6 +20,7 @@ reply2 = {
 
 dyo1 = {
     'id': '1',
+    'groupId': '123',
     'headline': 'A title',
     'body': 'My content',
     'tags': ['content', 'first'],
@@ -33,6 +34,7 @@ dyo1 = {
 
 dyo2 = {
     'id': '2',
+    'groupId': '123',
     'headline': 'A title',
     'body': 'My content',
     'tags': ['content', 'first'],
