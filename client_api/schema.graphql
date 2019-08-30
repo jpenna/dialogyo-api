@@ -1,0 +1,78 @@
+scalar DateTime
+
+type Query {
+    dyo: Dyo
+    dyosList: [Dyo!]!
+    repy: Reply
+    replyesList: [Reply!]!
+}
+
+type Mutation {
+    createDyo(
+        # parentId: String
+        # groupId: String
+
+        headline: String
+
+        "The content for the post."
+        body: String!
+
+        "Define at least 3 tags."
+        tags: [String!]!
+
+        privacy: [String]
+    ): createDyoPayload
+}
+
+type createDyoPayload {
+    error: [String]
+    dyo: Dyo
+    userId: String
+}
+
+type User {
+    id: ID
+    email: String
+    username: String
+}
+
+# TODO ID is not unique (create composite with name + group)
+type Author {
+    # id: ID
+    name: String!
+    avatar: String!
+}
+
+type Reply {
+    id: ID!
+    body: String!
+    author: Author!
+
+    "Dyo ID which this reply replies"
+    dyoId: String!
+}
+
+# TODO fetch parent list
+type Dyo {
+    """
+    [] - Private\n
+    [*] - Public\n
+    [&] - Friends\n
+    ['id1', 'id2'] - Selected users\n
+    """
+    privacy: [String!]!
+
+    id: ID!
+    groupId: String!
+    headline: String
+
+    "The content for the post."
+    body: String!
+
+    tags: [String!]!
+    createdAt: DateTime!
+    author: Author!
+    repliesList: [Reply!]
+    dyosList: [Dyo!]
+    parentList: String!
+}

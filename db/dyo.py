@@ -7,12 +7,7 @@ def create_dyo(userId, dyo, author):
     if not userId:
         userId = uuid.uuid4().hex
 
-    GraphDB.tx_write(
-        _tx_create_dyo,
-        userId,
-        dyo,
-        author,
-    )
+    GraphDB.tx_write(_tx_create_dyo, userId, dyo, author)
 
 
 # TODO use Node for tags, instead of prop
@@ -49,13 +44,13 @@ def _tx_create_topic(tx, userId, dyo, author):
     values = result.data()[0]
 
     dyo = dict(values['dyo'].items())
-    dyo['parentId'] = values['parentId']
-    dyo['groupId'] = values['groupId']
 
     return dict(
         dyo=dyo,
         author=dict(values['author'].items()),
         userId=values['userId'],
+        parentId=values['parentId'],
+        groupId=values['groupId']
     )
 
 

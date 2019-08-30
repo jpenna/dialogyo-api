@@ -5,6 +5,7 @@ verify_ssl = true
 
 [dev-packages]
 black = "*"
+ptvsd = "*"
 
 [packages]
 graphene = "*"
@@ -16,6 +17,7 @@ snapshottest = "*"
 pytest = "*"
 neo4j = "*"
 itsdangerous = "*"
+ariadne = "*"
 
 [requires]
 python_version = "3.7"

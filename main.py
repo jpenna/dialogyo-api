@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 from starlette.applications import Starlette
-from starlette.graphql import GraphQLApp
+from ariadne.asgi import GraphQL
 import os
 import debuggers
 
@@ -19,7 +19,7 @@ if isDev:
 app = Starlette(debug=isDev)
 setup_middlewares(app)
 
-app.add_route('/graphql', GraphQLApp(schema=schema))
+app.mount('/graphql', GraphQL(schema=schema, debug=isDev))
 
 graphDB = GraphDB()
 
