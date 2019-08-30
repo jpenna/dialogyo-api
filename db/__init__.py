@@ -17,5 +17,10 @@ class GraphDB(object):
                 auth=(GraphDB._user, GraphDB._password),
             )
 
+    @staticmethod
     def disconnect(self):
         GraphDB._driver.close()
+
+    def tx_write(*args, **kwargs):
+        with GraphDB._driver.session() as session:
+            return session.write_transaction(*args, **kwargs)

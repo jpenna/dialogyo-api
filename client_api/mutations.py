@@ -1,6 +1,7 @@
 import db.dyo as dyoDB
 from graphene import ObjectType, String, List, NonNull, Mutation, Field
 from client_api.types import Dyo, privacy_description, Reply
+from client_api.db_handler import dispatch_db
 
 from client_api._data import author1, reply1, dyo1
 
@@ -25,41 +26,41 @@ class CreateDyo(Mutation):
         assert len(tags) >= 3, 'Set at least 3 tags'
 
         userId = 'another'
-        dyo = {
-            'headline': headline,
-            'body': body,
-            'tags': tags,
-            'privacy': privacy,
-            'parentId': parentId,
-            'groupId': groupId,
-        }
-        author = {
-            'name': author1['name'],
-            'avatar': author1['avatar'],
-        }
+        dyo = dict(
+            headline=headline,
+            body=body,
+            tags=tags,
+            privacy=privacy,
+            parentId=parentId,
+            groupId=groupId,
+        )
+        author = dict(
+            name=author1['name'],
+            avatar=author1['avatar'],
+        )
 
-        result = dyoDB.create_dyo(userId, dyo, author)
+        result = dispatch_db(dyoDB.create_dyo, userId, dyo, author)
         resDyo = result['dyo']
         resAuthor = result['author']
 
-        newAuthor = {
-            'id': 'whatever',
-            'name': resAuthor.get('name', ''),
-            'avatar': resAuthor.get('avatar', ''),
-        }
-        newDyo = Dyo(**{
-            'id': resDyo.get('id', ''),
-            'groupId': resDyo.get('groupId', ''),
-            'headline': resDyo.get('headline', ''),
-            'body': resDyo.get('body', ''),
-            'tags': resDyo.get('tags', []),
-            'createdAt': str(resDyo.get('createdAt', '')),
-            'privacy': resDyo.get('privacy', []),
-            'author': newAuthor,
-            'repliesList': resDyo.get('repliesList', []),
-            'dyosList': resDyo.get('dyosList', []),
-            'parentList': resDyo.get('parentList', []),
-        })
+        newAuthor = dict(
+            id='whatever',
+            name=resAuthor.get('name', ''),
+            avatar=resAuthor.get('avatar', ''),
+        )
+        newDyo = Dyo(**dict(
+            id=resDyo.get('id', ''),
+            groupId=resDyo.get('groupId', ''),
+            headline=resDyo.get('headline', ''),
+            body=resDyo.get('body', ''),
+            tags=resDyo.get('tags', []),
+            createdAt=str(resDyo.get('createdAt', '')),
+            privacy=resDyo.get('privacy', []),
+            author=newAuthor,
+            repliesList=resDyo.get('repliesList', []),
+            dyosList=resDyo.get('dyosList', []),
+            parentList=resDyo.get('parentList', []),
+        ))
         return CreateDyo(dyo=newDyo, userId=result['userId'])
 
 
@@ -73,12 +74,12 @@ class CreateReply(Mutation):
     Output = Reply
 
     def mutate(root, info, dyoId, body, authorId=None):
-        reply = {
-            'id': 'fwo2',
-            'dyoId': dyoId,
-            'body': body,
-            'author': author1
-        }
+        reply = dict(
+            id='fwo2',
+            dyoId=dyoId,
+            body=body,
+            author=author1
+        )
         return Reply(**reply)
 
 
