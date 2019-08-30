@@ -7,7 +7,7 @@ def create_dyo(userId, dyo, author):
     if not userId:
         userId = uuid.uuid4().hex
 
-    GraphDB.tx_write(_tx_create_dyo, userId, dyo, author)
+    return GraphDB.tx_write(_tx_create_topic, userId, dyo, author)
 
 
 # TODO use Node for tags, instead of prop
@@ -27,7 +27,7 @@ def _tx_create_topic(tx, userId, dyo, author):
                 author.name = $author.name,
                 author.avatar = $author.avatar
         SET rel.lastOp = timestamp()
-        MERGE (author)-[:MEMBER]->(group)
+        MERGE (author)-[:MEMBER]->(group:Group { id: $groupId })
         CREATE (author)-[:WROTE]->(dyo:Dyo:Topic {
                 id: $dyoId,
                 createdAt: timestamp(),
@@ -49,7 +49,6 @@ def _tx_create_topic(tx, userId, dyo, author):
         dyo=dyo,
         author=dict(values['author'].items()),
         userId=values['userId'],
-        parentId=values['parentId'],
         groupId=values['groupId']
     )
 

@@ -5,16 +5,15 @@ verify_ssl = true
 
 [dev-packages]
 black = "*"
-ptvsd = "*"
+pytest = "*"
+snapshottest = "*"
+flake8 = "*"
+ptvsd = "==4.3.2"
 
 [packages]
-graphene = "*"
-flake8 = "*"
 starlette = "*"
 uvicorn = "*"
 python-dotenv = "*"
-snapshottest = "*"
-pytest = "*"
 neo4j = "*"
 itsdangerous = "*"
 ariadne = "*"
