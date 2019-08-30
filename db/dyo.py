@@ -13,7 +13,7 @@ def create_dyo(userId, dyo, author):
 # TODO use Node for tags, instead of prop
 def _tx_create_topic(tx, userId, dyo, author):
     dyoId = uuid.uuid4().hex
-    groupId = dyoId
+    groupId = uuid.uuid4().hex
 
     statement = """
         MERGE (user:User { id: $userId })
@@ -43,10 +43,8 @@ def _tx_create_topic(tx, userId, dyo, author):
                     dyoId=dyoId, groupId=groupId, userId=userId)
     values = result.data()[0]
 
-    dyo = dict(values['dyo'].items())
-
     return dict(
-        dyo=dyo,
+        dyo=dict(values['dyo'].items()),
         author=dict(values['author'].items()),
         userId=values['userId'],
         groupId=values['groupId']

@@ -9,7 +9,9 @@ mutation = MutationType()
 @mutation.field('createDyo')
 def resolve_create_dyo(_, info, body, tags, privacy=[], headline=''):
     if len(tags) < 3:
-        raise ValueError('Set at least 3 tags')
+        raise ValueError('Set at least 3 tags.')
+    if len(body) < 1:
+        raise ValueError('Set a body.')
 
     userId = 'another'
     authorData = author1  # get from Redis
@@ -17,7 +19,14 @@ def resolve_create_dyo(_, info, body, tags, privacy=[], headline=''):
     dyo = dict(headline=headline, body=body, tags=tags, privacy=privacy)
     author = dict(name=authorData['name'], avatar=authorData['avatar'])
 
-    return dyoDB.create_dyo(userId, dyo, author)
+    result = dyoDB.create_dyo(userId, dyo, author)
+
+    result['dyo']['author'] = result['author']
+    result['dyo']['groupId'] = result['groupId']
+
+    return result
+
+
     # resDyo = result['dyo']
     # resAuthor = result['author']
 

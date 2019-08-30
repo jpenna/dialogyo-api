@@ -21,10 +21,10 @@ type Mutation {
         tags: [String!]!
 
         privacy: [String]
-    ): createDyoPayload
+    ): CreateDyoPayload
 }
 
-type createDyoPayload {
+type CreateDyoPayload {
     error: [String]
     dyo: Dyo
     userId: String
@@ -72,7 +72,7 @@ type Dyo {
     tags: [String!]!
     createdAt: DateTime!
     author: Author!
-    repliesList: [Reply!]
-    dyosList: [Dyo!]
-    parentList: String!
+    # repliesList: [Reply!]!
+    # dyosList: [Dyo!]!
+    # parentList: [String!]!
 }
