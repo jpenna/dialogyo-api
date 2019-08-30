@@ -49,4 +49,6 @@ RETURN *
 CREATE CONSTRAINT ON (a:Author) ASSERT a.name IS UNIQUE;
 CREATE CONSTRAINT ON (a:Author) ASSERT a.avatar IS UNIQUE;
 
+CREATE CONSTRAINT ON (u:User) ASSERT u.id IS UNIQUE;
+
 Activate user, set prop actvated = true. If not activated, then it's loose

@@ -1,8 +1,6 @@
 import uuid
 from db import GraphDB
 
-from client_api._data import author1, reply1, dyo1
-
 
 def create_dyo(userId, dyo, author):
     # Create new user ID if not set
@@ -10,57 +8,61 @@ def create_dyo(userId, dyo, author):
         userId = uuid.uuid4().hex
 
     with GraphDB._driver.session() as session:
-        dyo = session.write_transaction(
+        return session.write_transaction(
             _tx_create_dyo,
             userId,
             dyo,
             author,
         )
-        return dyo
 
 
+# TODO use Node for tags, instead of prop
 def _tx_create_dyo(tx, userId, dyo, author):
     dyoId = uuid.uuid4().hex
     groupId = dyo.get('groupId', dyoId)
 
     statement = """
-        MERGE (user:User { userId: $userId })
+        MERGE (group:Group { id: $groupId })
+        WITH group
+        OPTIONAL MATCH (parentDyo:Dyo { id: $dyo.parentId })<-
+            [:CONTAINS]-(group)
+        MERGE (user:User { id: $userId })
             ON CREATE SET
                 user:Loose,
                 user.createdAt = timestamp(),
                 user.lastAccess = timestamp()
-            ON MATCH SET
-                user.lastAccess = timestamp()
-        MERGE (user)-[rel:IS]->
-                (author:Author { groupId: $groupId })
+        MERGE (author:Author)<-[rel:IS { groupId: $groupId }]-(user)
             ON CREATE SET
-                author.createdAt = timestamp(),
+                rel.createdAt = timestamp(),
                 author.name = $author.name,
                 author.avatar = $author.avatar
+        SET rel.lastOp = timestamp()
+        MERGE (author)-[:MEMBER]->(group)
         CREATE (author)-[:WROTE]->(dyo:Dyo {
-            id: $dyoId,
-            groupId: $groupId,
-            createdAt: timestamp(),
-            headline: $dyo.headline,
-            body: $dyo.body,
-            tags: $dyo.tags,
-            privacy: $dyo.privacy
-        })
-        RETURN dyo
+                id: $dyoId,
+                createdAt: timestamp(),
+                headline: $dyo.headline,
+                body: $dyo.body,
+                tags: $dyo.tags,
+                privacy: $dyo.privacy
+            })<-[:CONTAINS]-(group)
+        FOREACH (n IN
+            CASE WHEN parentDyo IS NOT NULL THEN [1] ELSE [] END |
+            CREATE (dyo)-[:ENGAGE]->(parentDyo))
+        RETURN dyo, author, user.id as userId,
+            $groupId as groupId, parentDyo.id as parentId
     """
 
     result = tx.run(statement, dyo=dyo, author=author,
                     dyoId=dyoId, groupId=groupId, userId=userId)
-    # values = result.single().value()
-    # tx.commit()
+    values = result.data()[0]
+
+    dyo = dict(values['dyo'].items())
+    dyo['parentId'] = values['parentId']
+    dyo['groupId'] = values['groupId']
+
     return {
-        'id': '1234asd',
-        'headline': dyo['headline'],
-        'body': dyo['body'],
-        'tags': dyo['tags'],
-        'createdAt': '123412312',
-        'privacy': dyo['privacy'],
-        'author': author1,
-        'repliesList': [reply1],
-        'dyosList': [dyo1]
+        'dyo': dyo,
+        'author': dict(values['author'].items()),
+        'userId': values['userId'],
     }

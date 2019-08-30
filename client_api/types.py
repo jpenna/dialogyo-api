@@ -9,9 +9,14 @@ privacy_description = '''
 '''
 
 
+class User(ObjectType):
+    id = ID(required=True)
+    email = String()
+    username = String()
+
+
 class Author(ObjectType):
-    id = ID(required=True)  # todo is not unique
-    # createdAt = DateTime(required=True)
+    id = ID(required=True)  # TODO is not unique (create composite with name + group)
     name = String(required=True)
     avatar = String(required=True)
 
@@ -36,4 +41,4 @@ class Dyo(ObjectType):
     author = NonNull(Author)
     repliesList = List(NonNull(Reply))
     dyosList = List(lambda: NonNull(Dyo))
-    parentList = List(NonNull(ID))
+    parentList = List(NonNull(ID))  # TODO fetch parent list
