@@ -1,34 +1,5 @@
 scalar DateTime
 
-type Query {
-    dyo: Dyo
-    dyosList: [Dyo!]!
-    repy: Reply
-    replyesList: [Reply!]!
-}
-
-type Mutation {
-    "Create brand new Dyo"
-    createDyo(
-        headline: String
-        "The content for the post."
-        body: String!
-        "Define at least 3 tags."
-        tags: [String!]
-        privacy: [String]
-        "Dyo this one is starting a dialog with."
-        parentId: String
-        "Group that contains the parent Dyo."
-        groupId: String
-    ): CreateDyoPayload
-}
-
-type CreateDyoPayload {
-    error: [String]
-    dyo: Dyo
-    userId: String
-}
-
 type User {
     id: ID
     email: String
@@ -76,4 +47,56 @@ type Dyo {
     # repliesList: [Reply!]!
     # dyosList: [Dyo!]!
     # parentList: [String!]!
+}
+
+
+
+#**********************#
+#         Query        #
+#**********************#
+
+type Query {
+    dyo: Dyo
+    # dyosList: [Dyo!]!
+    repy: Reply
+    # replyesList: [Reply!]!
+}
+
+
+
+#**********************#
+#       Mutation       #
+#**********************#
+
+type Mutation {
+    "Create brand new Dyo"
+    createDyo(
+        headline: String
+        "The content for the post."
+        body: String!
+        "Define at least 3 tags."
+        tags: [String!]
+        privacy: [String]
+        "Dyo this one is starting a dialog with."
+        parentId: String
+        "Group that contains the parent Dyo."
+        groupId: String
+    ): CreateDyoPayload
+
+    "Create reply to one Dyo"
+    createReply(
+        body: String!
+        "Dyo ID which this reply replies"
+        dyoId: String!
+    ): CreateReplyPayload
+}
+
+type CreateDyoPayload {
+    dyo: Dyo
+    userId: String
+}
+
+type CreateReplyPayload {
+    dyo: Dyo
+    userId: String
 }

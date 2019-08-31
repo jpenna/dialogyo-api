@@ -1,8 +1,18 @@
 import uuid
 from db import GraphDB
+from app_errors import ApiError
 
 
 def create_dyo(userId, dyo, author):
+    """Create Dyo, both head and start new thread.
+    It bases the creation of a dyo on the presence of `dyo.parentId`.
+
+    Attributes:
+        previous -- state at beginning of transition
+        next -- attempted new state
+        message -- explanation of why the specific transition is not allowed
+    """
+
     # Create new user ID if not set
     if not userId:
         userId = uuid.uuid4().hex
@@ -14,6 +24,15 @@ def create_dyo(userId, dyo, author):
 
 # TODO use Node for tags, instead of prop
 def _tx_create_head(tx, userId, dyo, author):
+    """Create head Dyo node: starter node of the group
+
+    Attributes:
+        tx -- Transaction callback given by neo4j driver
+        userId -- Creator user ID
+        dyo -- Attributes of the dyo to be created
+        author -- Properties of the Author (if creating new author)
+    """
+
     dyoId = uuid.uuid4().hex
     groupId = uuid.uuid4().hex
 
@@ -94,8 +113,9 @@ def _tx_create_dyo(tx, userId, dyo, author):
     try:
         values = result.data()[0]
     except ValueError:
-        raise ValueError('Could not create your Dyo. '
-                         'Maybe the provided `groupId` or `parentId` does not exist')
+        raise ApiError(99, 'UnknownError',
+                       'Could not create your Dyo. Maybe the provided `groupId` '
+                       'or `parentId` does not exist')
 
     dyo = values['dyo']
     dyo['author'] = dict(values['author'])

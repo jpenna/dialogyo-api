@@ -1,8 +1,9 @@
 import db.dyo as dyoDB
 from operator import xor
 from ariadne import MutationType
+from app_errors import ApiError
 
-from client_api._data import author1, author2
+from client_api._data import author1
 
 mutation = MutationType()
 
@@ -11,12 +12,12 @@ mutation = MutationType()
 def resolve_create_dyo(_, info, body, tags, privacy=['*'], groupId='',
                        parentId='', headline=''):
     if len(tags) < 3:
-        raise ValueError('Set at least 3 tags.')
+        raise ApiError(1, 'InvalidValue', 'Set at least 3 tags.')
     if len(body) < 1:
-        raise ValueError('Set a body.')
+        raise ApiError(1, 'InvalidValue', 'Set a body.')
     if xor(bool(groupId), bool(parentId)):
-        raise ValueError('To start a dialogue, please set both `parentId` and '
-                         '`groupId`. Otherwise, leave both empty to create a new Dyo.')
+        raise ApiError(1, 'InvalidValue', 'To start a dialogue, please set both `parentId` and '
+                       '`groupId`. Otherwise, leave both empty to create a new Dyo.')
 
     userId = headline  # get from cookie
     authorData = author1  # get from Redis
@@ -26,7 +27,6 @@ def resolve_create_dyo(_, info, body, tags, privacy=['*'], groupId='',
     author = dict(name=authorData['name'], avatar=authorData['avatar'])
 
     return dyoDB.create_dyo(userId, dyo, author)
-
 
 
 # class CreateReply(Mutation):

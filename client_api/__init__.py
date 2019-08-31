@@ -1,6 +1,5 @@
 import os
-from ariadne import make_executable_schema
-from ariadne import load_schema_from_path
+from ariadne import make_executable_schema, load_schema_from_path
 
 from client_api.mutations import mutation
 

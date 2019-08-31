@@ -26,3 +26,8 @@ docker run \
 ```
 
  Install APOC: https://neo4j-contrib.github.io/neo4j-apoc-procedures/3.4/installation/
+
+## Errors
+
+1 - Invalid Value
+99 - Unknown Error

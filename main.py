@@ -6,6 +6,7 @@ import debuggers
 
 from middlewares import setup_middlewares
 from client_api import schema
+from client_api.error_formatter import error_formatter
 from db import GraphDB
 
 load_dotenv()
@@ -19,7 +20,7 @@ if isDev:
 app = Starlette(debug=isDev)
 setup_middlewares(app)
 
-app.mount('/graphql', GraphQL(schema=schema, debug=isDev))
+app.mount('/graphql', GraphQL(schema=schema, debug=isDev, error_formatter=error_formatter))
 
 graphDB = GraphDB()
 
