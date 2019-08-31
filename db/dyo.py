@@ -56,7 +56,7 @@ def _tx_create_head(tx, userId, dyo, author):
                 body: $dyo.body,
                 tags: $dyo.tags,
                 privacy: $dyo.privacy
-            })<-[:CONTAINS]-(group)
+            })-[:BELONGS_TO]->(group)
         RETURN dyo{.*, groupId:$groupId},
             author,
             user.id as userId
@@ -81,8 +81,8 @@ def _tx_create_dyo(tx, userId, dyo, author):
 
     statement = """
         MATCH (group:Group { id: $groupId })
-        MATCH (parentDyo:Dyo { id: $dyo.parentId })<-
-            [:CONTAINS]-(group)
+        MATCH (parentDyo:Dyo { id: $dyo.parentId })-
+            [:BELONGS_TO]->(group)
         MERGE (user:User { id: $userId })
             ON CREATE SET
                 user:Loose,
@@ -100,7 +100,7 @@ def _tx_create_dyo(tx, userId, dyo, author):
                 createdAt: timestamp(),
                 body: $dyo.body,
                 privacy: $dyo.privacy
-            })<-[:CONTAINS]-(group)
+            })-[:BELONGS_TO]->(group)
         CREATE (dyo)-[:ENGAGE]->(parentDyo)
         RETURN dyo{.*, groupId:$groupId, parentId:parentDyo.id},
             author,
@@ -112,7 +112,7 @@ def _tx_create_dyo(tx, userId, dyo, author):
 
     try:
         values = result.data()[0]
-    except ValueError:
+    except IndexError:
         raise ApiError(99, 'UnknownError',
                        'Could not create your Dyo. Maybe the provided `groupId` '
                        'or `parentId` does not exist')
