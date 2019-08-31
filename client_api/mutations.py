@@ -1,30 +1,32 @@
 import db.dyo as dyoDB
+from operator import xor
 from ariadne import MutationType
 
-from client_api._data import author1, reply1, dyo1
+from client_api._data import author1, author2
 
 mutation = MutationType()
 
 
 @mutation.field('createDyo')
-def resolve_create_dyo(_, info, body, tags, privacy=[], headline=''):
+def resolve_create_dyo(_, info, body, tags, privacy=[], groupId='',
+                       parentId='', headline=''):
     if len(tags) < 3:
         raise ValueError('Set at least 3 tags.')
     if len(body) < 1:
         raise ValueError('Set a body.')
+    if xor(bool(groupId), bool(parentId)):
+        raise ValueError('To start a dialogue, please set both parentId and '
+                         'groupId. Otherwise, leave both empty to create a new Dyo.')
 
     userId = 'another'
     authorData = author1  # get from Redis
 
-    dyo = dict(headline=headline, body=body, tags=tags, privacy=privacy)
+    dyo = dict(headline=headline, body=body, tags=tags, privacy=privacy,
+               parentId=parentId, groupId=groupId)
     author = dict(name=authorData['name'], avatar=authorData['avatar'])
 
-    result = dyoDB.create_dyo(userId, dyo, author)
+    return dyoDB.create_dyo(userId, dyo, author)
 
-    result['dyo']['author'] = result['author']
-    result['dyo']['groupId'] = result['groupId']
-
-    return result
 
 
     # resDyo = result['dyo']

@@ -11,7 +11,7 @@ def parse_datetime_value(value):
         try:
             return datetime.fromtimestamp(value)
         except Exception as e:
-            if (os.getenv('DEVELOPMENT')):
+            if os.getenv('ENV') != 'prod':
                 raise e
             raise ValueError(f'The datetime value ({value}) is not valid,'
                              'please provide a timestamp.')

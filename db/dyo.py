@@ -7,11 +7,13 @@ def create_dyo(userId, dyo, author):
     if not userId:
         userId = uuid.uuid4().hex
 
-    return GraphDB.tx_write(_tx_create_topic, userId, dyo, author)
+    callback = _tx_create_dyo if dyo.get('parentId') else _tx_create_head
+
+    return GraphDB.tx_write(callback, userId, dyo, author)
 
 
 # TODO use Node for tags, instead of prop
-def _tx_create_topic(tx, userId, dyo, author):
+def _tx_create_head(tx, userId, dyo, author):
     dyoId = uuid.uuid4().hex
     groupId = uuid.uuid4().hex
 
@@ -28,7 +30,7 @@ def _tx_create_topic(tx, userId, dyo, author):
                 author.avatar = $author.avatar
         SET rel.lastOp = timestamp()
         MERGE (author)-[:MEMBER]->(group:Group { id: $groupId })
-        CREATE (author)-[:WROTE]->(dyo:Dyo:Topic {
+        CREATE (author)-[:WROTE]->(dyo:Dyo:Head {
                 id: $dyoId,
                 createdAt: timestamp(),
                 headline: $dyo.headline,
@@ -36,24 +38,27 @@ def _tx_create_topic(tx, userId, dyo, author):
                 tags: $dyo.tags,
                 privacy: $dyo.privacy
             })<-[:CONTAINS]-(group)
-        RETURN dyo, author, user.id as userId, $groupId as groupId
+        RETURN dyo{.*, groupId:$groupId},
+            author,
+            user.id as userId
     """
 
     result = tx.run(statement, dyo=dyo, author=author,
                     dyoId=dyoId, groupId=groupId, userId=userId)
     values = result.data()[0]
 
+    dyo = values['dyo']
+    dyo['author'] = dict(values['author'])
+
     return dict(
-        dyo=dict(values['dyo'].items()),
-        author=dict(values['author'].items()),
+        dyo=dyo,
         userId=values['userId'],
-        groupId=values['groupId']
     )
 
 
 def _tx_create_dyo(tx, userId, dyo, author):
     dyoId = uuid.uuid4().hex
-    groupId = dyo.get('groupId')
+    groupId = dyo['groupId']
 
     errors = []
     if not groupId:
@@ -91,13 +96,18 @@ def _tx_create_dyo(tx, userId, dyo, author):
         FOREACH (n IN
             CASE WHEN parentDyo IS NOT NULL THEN [1] ELSE [] END |
             CREATE (dyo)-[:ENGAGE]->(parentDyo))
-        RETURN dyo, author, user.id as userId,
+        RETURN dyo{.*, author:author, groupId:$groupId},
+            user.id as userId,
             $groupId as groupId, parentDyo.id as parentId
     """
 
     result = tx.run(statement, dyo=dyo, author=author,
                     dyoId=dyoId, groupId=groupId, userId=userId)
-    values = result.data()[0]
+    values = result.data()
+
+    if not values:
+        raise TypeError('Could not create your Dyo. '
+                        'Maybe the provided <groupId> or <parentId> does not exist')
 
     dyo = dict(values['dyo'].items())
     dyo['parentId'] = values['parentId']

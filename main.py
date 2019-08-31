@@ -10,7 +10,7 @@ from db import GraphDB
 
 load_dotenv()
 
-isDev = os.getenv('DEVELOPMENT')
+isDev = os.getenv('ENV') != 'prod'
 
 if isDev:
     if os.getenv('VS_CODE'):

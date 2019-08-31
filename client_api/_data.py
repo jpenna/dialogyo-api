@@ -4,6 +4,12 @@ author1 = {
     'avatar': '#984321'
 }
 
+author2 = {
+    'id': '90',
+    'name': 'Mary Poppins',
+    'avatar': '#782312'
+}
+
 reply1 = {
     'id': '1',
     'body': 'You are completely wrong',

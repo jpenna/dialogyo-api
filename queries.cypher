@@ -18,7 +18,7 @@ CREATE (user:User {
 })
 RETURN user.id
 
-// Create topic
+// Create head dyo
 MATCH (user:User { username: $username })
 MERGE (user)-[rel:IS]-(author:Author { baseId: $baseId })
 	ON CREATE SET author.createdAt = timestamp()

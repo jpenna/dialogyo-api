@@ -8,18 +8,27 @@ type Query {
 }
 
 type Mutation {
+    "Create brand new Dyo"
     createDyo(
-        # parentId: String
-        # groupId: String
-
         headline: String
-
         "The content for the post."
         body: String!
-
         "Define at least 3 tags."
         tags: [String!]!
+        privacy: [String]
+        "Dyo this one is starting a dialog with."
+        parentId: String
+        "Group that contains the parent Dyo."
+        groupId: String
+    ): CreateDyoPayload
 
+    "Start a new dialogue based on another"
+    startDyo(
+        headline: String
+        "The content for the post."
+        body: String!
+        "Define at least 3 tags."
+        tags: [String!]!
         privacy: [String]
     ): CreateDyoPayload
 }

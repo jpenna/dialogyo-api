@@ -5,7 +5,7 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.gzip import GZipMiddleware
 import os
 
-isDev = os.getenv('DEVELOPMENT')
+isDev = os.getenv('ENV') != 'prod'
 allowedHosts = ['dyalogio.com', 'dialogyo.com', 'dyalogyo.com']
 
 
@@ -20,7 +20,7 @@ def setup_middlewares(app):
         )
         app.add_middleware(
             CORSMiddleware,
-            allow_origin=[f'https://{host}' for host in allowedHosts],
+            allow_origins=[f'https://{host}' for host in allowedHosts],
             allow_methods=['*'],
         )
         # app.add_middleware(
