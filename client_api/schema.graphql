@@ -14,22 +14,12 @@ type Mutation {
         "The content for the post."
         body: String!
         "Define at least 3 tags."
-        tags: [String!]!
+        tags: [String!]
         privacy: [String]
         "Dyo this one is starting a dialog with."
         parentId: String
         "Group that contains the parent Dyo."
         groupId: String
-    ): CreateDyoPayload
-
-    "Start a new dialogue based on another"
-    startDyo(
-        headline: String
-        "The content for the post."
-        body: String!
-        "Define at least 3 tags."
-        tags: [String!]!
-        privacy: [String]
     ): CreateDyoPayload
 }
 
@@ -78,9 +68,11 @@ type Dyo {
     "The content for the post."
     body: String!
 
-    tags: [String!]!
+    tags: [String!]
     createdAt: DateTime!
     author: Author!
+
+    parentId: String
     # repliesList: [Reply!]!
     # dyosList: [Dyo!]!
     # parentList: [String!]!

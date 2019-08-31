@@ -60,15 +60,6 @@ def _tx_create_dyo(tx, userId, dyo, author):
     dyoId = uuid.uuid4().hex
     groupId = dyo['groupId']
 
-    errors = []
-    if not groupId:
-        errors.append('Group ID <groupId> is required to create a Dyo.')
-    if 'parentId' not in dyo:
-        errors.append('Parent ID <parentId> is required to create a Dyo.')
-
-    if len(errors):
-        raise KeyError('\n'.join(errors))
-
     statement = """
         MATCH (group:Group { id: $groupId })
         MATCH (parentDyo:Dyo { id: $dyo.parentId })<-
@@ -88,33 +79,28 @@ def _tx_create_dyo(tx, userId, dyo, author):
         CREATE (author)-[:WROTE]->(dyo:Dyo {
                 id: $dyoId,
                 createdAt: timestamp(),
-                headline: $dyo.headline,
                 body: $dyo.body,
-                tags: $dyo.tags,
                 privacy: $dyo.privacy
             })<-[:CONTAINS]-(group)
-        FOREACH (n IN
-            CASE WHEN parentDyo IS NOT NULL THEN [1] ELSE [] END |
-            CREATE (dyo)-[:ENGAGE]->(parentDyo))
-        RETURN dyo{.*, author:author, groupId:$groupId},
-            user.id as userId,
-            $groupId as groupId, parentDyo.id as parentId
+        CREATE (dyo)-[:ENGAGE]->(parentDyo)
+        RETURN dyo{.*, groupId:$groupId, parentId:parentDyo.id},
+            author,
+            user.id as userId
     """
 
     result = tx.run(statement, dyo=dyo, author=author,
                     dyoId=dyoId, groupId=groupId, userId=userId)
-    values = result.data()
 
-    if not values:
-        raise TypeError('Could not create your Dyo. '
-                        'Maybe the provided <groupId> or <parentId> does not exist')
+    try:
+        values = result.data()[0]
+    except ValueError:
+        raise ValueError('Could not create your Dyo. '
+                         'Maybe the provided `groupId` or `parentId` does not exist')
 
-    dyo = dict(values['dyo'].items())
-    dyo['parentId'] = values['parentId']
-    dyo['groupId'] = values['groupId']
+    dyo = values['dyo']
+    dyo['author'] = dict(values['author'])
 
     return dict(
         dyo=dyo,
-        author=dict(values['author'].items()),
         userId=values['userId'],
     )

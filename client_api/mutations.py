@@ -8,17 +8,17 @@ mutation = MutationType()
 
 
 @mutation.field('createDyo')
-def resolve_create_dyo(_, info, body, tags, privacy=[], groupId='',
+def resolve_create_dyo(_, info, body, tags, privacy=['*'], groupId='',
                        parentId='', headline=''):
     if len(tags) < 3:
         raise ValueError('Set at least 3 tags.')
     if len(body) < 1:
         raise ValueError('Set a body.')
     if xor(bool(groupId), bool(parentId)):
-        raise ValueError('To start a dialogue, please set both parentId and '
-                         'groupId. Otherwise, leave both empty to create a new Dyo.')
+        raise ValueError('To start a dialogue, please set both `parentId` and '
+                         '`groupId`. Otherwise, leave both empty to create a new Dyo.')
 
-    userId = 'another'
+    userId = headline  # get from cookie
     authorData = author1  # get from Redis
 
     dyo = dict(headline=headline, body=body, tags=tags, privacy=privacy,
@@ -27,30 +27,6 @@ def resolve_create_dyo(_, info, body, tags, privacy=[], groupId='',
 
     return dyoDB.create_dyo(userId, dyo, author)
 
-
-
-    # resDyo = result['dyo']
-    # resAuthor = result['author']
-
-    # newAuthor = dict(
-    # 	id='whatever',
-    # 	name=resAuthor.get('name', ''),
-    # 	avatar=resAuthor.get('avatar', ''),
-    # )
-    # newDyo = Dyo(**dict(
-    # id=resDyo.get('id', ''),
-    # groupId=resDyo.get('groupId', ''),
-    # headline=resDyo.get('headline', ''),
-    # body=resDyo.get('body', ''),
-    # tags=resDyo.get('tags', []),
-    # createdAt=str(resDyo.get('createdAt', '')),
-    # privacy=resDyo.get('privacy', []),
-    # author=newAuthor,
-    # repliesList=resDyo.get('repliesList', []),
-    # dyosList=resDyo.get('dyosList', []),
-    # parentList=resDyo.get('parentList', []),
-    # ))
-    # return (dyo=newDyo, userId=result['userId'])
 
 
 # class CreateReply(Mutation):
