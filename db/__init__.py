@@ -1,26 +1,44 @@
-from neo4j import GraphDatabase
+import functools
 import os
+import threading
+from neo4j import GraphDatabase, ServiceUnavailable
+from time import sleep
 
 
 class GraphDB(object):
 
     _driver = None
     _uri = 'bolt://127.0.0.1:7687'
-    _user = os.getenv('NEO4J_USER')
-    _password = os.getenv('NEO4J_PASSWORD')
+    _user = os.getenv('NEO4J_USER', '')
+    _password = os.getenv('NEO4J_PASSWORD', '')
 
     @staticmethod
     def connect():
-        if not GraphDB._driver:
-            GraphDB._driver = GraphDatabase.driver(
-                GraphDB._uri,
-                auth=(GraphDB._user, GraphDB._password),
+        if GraphDB._driver:
+            return
+        threading.Thread(target=GraphDB.do_connect, daemon=True).start()
+
+    @classmethod
+    def do_connect(cls):
+        try:
+            # Single threads
+            print('Connecting to Neo4j...')
+            cls._driver = GraphDatabase.driver(
+                cls._uri,
+                auth=(cls._user, cls._password),
             )
+            print('Neo4j connected!')
+        except (ServiceUnavailable, OSError):
+            sleep(5)
+            cls.do_connect()
 
     @staticmethod
     def disconnect(self):
         GraphDB._driver.close()
 
-    def tx_write(*args, **kwargs):
-        with GraphDB._driver.session() as session:
-            return session.write_transaction(*args, **kwargs)
+    def tx_write(func):
+        @functools.wraps
+        def wrapper(*args, **kwargs):
+            with GraphDB._driver.session() as session:
+                return session.write_transaction(func, *args, **kwargs)
+        return wrapper
