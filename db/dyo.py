@@ -3,7 +3,7 @@ from db import GraphDB
 from app_errors import ApiError
 
 
-def create_dyo(userId, dyo, author):
+def create_dyo(userId: str, dyo: dict, author: dict):
     """Create Dyo, both head and start new thread.
     It bases the creation of a dyo on the presence of `dyo.parentId`.
 
@@ -19,11 +19,11 @@ def create_dyo(userId, dyo, author):
 
     callback = _tx_create_dyo if dyo.get('parentId') else _tx_create_head
 
-    return GraphDB.tx_write(callback, userId, dyo, author)
+    return GraphDB.tx_write(callback)(userId, dyo, author)
 
 
 # TODO use Node for tags, instead of prop
-def _tx_create_head(tx, userId, dyo, author):
+def _tx_create_head(tx: callable, userId: str, dyo: dict, author: dict):
     """Create head Dyo node: starter node of the group
 
     Attributes:
@@ -75,7 +75,7 @@ def _tx_create_head(tx, userId, dyo, author):
     )
 
 
-def _tx_create_dyo(tx, userId, dyo, author):
+def _tx_create_dyo(tx: callable, userId: str, dyo: dict, author: dict):
     dyoId = uuid.uuid4().hex
     groupId = dyo['groupId']
 
@@ -117,10 +117,10 @@ def _tx_create_dyo(tx, userId, dyo, author):
                        'Could not create your Dyo. Maybe the provided `groupId` '
                        'or `parentId` does not exist')
 
-    dyo = values['dyo']
-    dyo['author'] = dict(values['author'])
+    resDyo = values['dyo']
+    resDyo['author'] = dict(values['author'])
 
     return dict(
-        dyo=dyo,
+        dyo=resDyo,
         userId=values['userId'],
     )

@@ -14,21 +14,28 @@ type Author {
 }
 
 type Reply {
+    "Dyo ID which this reply replies"
+    dyoId: String!
+    groupId: String!
+
     id: ID!
     body: String!
     author: Author!
-
-    "Dyo ID which this reply replies"
-    dyoId: String!
+    createdAt: DateTime!
+    """
+    True - Private
+    False - Public
+    """
+    private: Boolean
 }
 
 # TODO fetch parent list
 type Dyo {
     """
-    [] - Private\n
-    [*] - Public\n
-    [&] - Friends\n
-    ['id1', 'id2'] - Selected users\n
+    [] - Private
+    [*] - Public
+    [&] - Friends
+    ['id1', 'id2'] - Selected users
     """
     privacy: [String!]!
 
@@ -86,8 +93,11 @@ type Mutation {
     "Create reply to one Dyo"
     createReply(
         body: String!
+        private: Boolean
         "Dyo ID which this reply replies"
         dyoId: String!
+        "Dyo group ID this reply replies"
+        groupId: String!
     ): CreateReplyPayload
 }
 
@@ -97,6 +107,6 @@ type CreateDyoPayload {
 }
 
 type CreateReplyPayload {
-    dyo: Dyo
+    reply: Reply
     userId: String
 }

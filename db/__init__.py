@@ -33,11 +33,12 @@ class GraphDB(object):
             cls.do_connect()
 
     @staticmethod
-    def disconnect(self):
+    def disconnect():
         GraphDB._driver.close()
 
+    @staticmethod
     def tx_write(func):
-        @functools.wraps
+        @functools.wraps(func)
         def wrapper(*args, **kwargs):
             with GraphDB._driver.session() as session:
                 return session.write_transaction(func, *args, **kwargs)
