@@ -43,3 +43,11 @@ class GraphDB(object):
             with GraphDB._driver.session() as session:
                 return session.write_transaction(func, *args, **kwargs)
         return wrapper
+
+    @staticmethod
+    def tx_read(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            with GraphDB._driver.session() as session:
+                return session.read_transaction(func, *args, **kwargs)
+        return wrapper

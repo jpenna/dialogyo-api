@@ -3,6 +3,23 @@ from db import GraphDB
 from app_errors import ApiError
 
 
+@GraphDB.tx_read
+def get_dyo_by_id(tx: callable, dyoId: str):
+    statement = """
+        MATCH (dyo:Dyo { id: $dyoId })
+        RETURN dyo
+    """
+
+    result = tx.run(statement, dyoId=dyoId)
+
+    try:
+        value = result.data()[0]
+    except IndexError:
+        raise ApiError(404, 'Not found', 'No Dyo was found with the requested ID.')
+
+    return dict(value['dyo'])
+
+
 def create_dyo(userId: str, dyo: dict, author: dict):
     """Create Dyo, both head and start new thread.
     It bases the creation of a dyo on the presence of `dyo.parentId`.

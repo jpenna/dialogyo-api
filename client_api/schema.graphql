@@ -63,9 +63,9 @@ type Dyo {
 #**********************#
 
 type Query {
-    dyo: Dyo
+    dyo(id: ID!): Dyo
     # dyosList: [Dyo!]!
-    repy: Reply
+    # repy(id: ID!): Reply
     # replyesList: [Reply!]!
 }
 
