@@ -10,7 +10,14 @@ allowedHosts = ['dyalogio.com', 'dialogyo.com', 'dyalogyo.com']
 
 
 def setup_middlewares(app):
-    if not isDev:
+    if isDev:
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=['*'],
+            allow_methods=['*'],
+            allow_headers=['*'],
+        )
+    else:
         app.add_middleware(
             TrustedHostMiddleware,
             allowed_hosts=allowedHosts,
